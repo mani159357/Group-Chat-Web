@@ -1,0 +1,314 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    /* Light gray background */
+    margin-top: 70px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: rgb(255, 255, 255);
+    height: 38.5rem
+}
+
+h1,
+h3 {
+    text-align: center;
+    margin: 10px 0;
+    color: #2c3e50;
+    /* Dark gray text color */
+}
+
+.messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin: 10px;
+    height: 25rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ecf0f1;
+    /* Light blue-gray background for table */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #3498db;
+    /* Blue header background */
+    color: #fff;
+    /* White text color */
+}
+
+th,
+td {
+    padding: 15px;
+    border: 1px solid #bdc3c7;
+    /* Light gray border */
+    text-align: left;
+}
+
+th {
+    text-align: center;
+}
+
+#messages tr:nth-child(even) {
+    background-color: #ecf0f1;
+    /* Light blue-gray background for even rows */
+}
+
+.form-container {
+    padding: 10px;
+    background-color: #fff;
+    /* White background for the form container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0%;
+}
+
+form {
+    display: flex;
+    align-items: center;
+}
+
+label,
+input,
+button {
+    margin: 5px;
+}
+
+button {
+    background-color: #4CAF50;
+    /* Green button background */
+    color: #fff;
+    /* White text color */
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button:hover{
+    background-color: #349048;
+}
+#messages tr.yourmsg td {
+    text-align: right;
+    /* Align text to the right */
+    padding-left: 10px;
+    /* Add some padding to separate from the left */
+}
+
+.usersjoined td {
+    text-align: center;
+}
+
+/* Add more styles as needed */
+
+/* Style the menu bar */
+ul.menu-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    background-color: #2c3e50;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+ul.menu-bar li {
+    display: inline-block;
+    margin-right: 10px;
+
+}
+
+ul.menu-bar li a {
+    display: block;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+ul.menu-bar li a:hover {
+    background-color: #34495e;
+}
+
+/* Style the user and group list sections */
+.list-section {
+    display: none;
+    padding: 20px;
+    background-color: #ecf0f1;
+    /* Light blue-gray background */
+}
+
+/* Style the form */
+form {
+    margin-top: 20px;
+}
+
+/* Style the user list in the form */
+.user-list-form {
+    margin-top: 10px;
+}
+
+/* Style the group list items */
+#groupList a {
+    cursor: pointer;
+    color: #3498db;
+    /* Blue text color */
+    text-decoration: underline;
+    margin-right: 10px;
+}
+
+#common-container {
+    display: none;
+}
+
+#user-container {
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    /* Adjust the margin-top as needed */
+    background-color: #ecf0f1;
+    /* Light blue-gray background */
+    /* Optional box shadow for a subtle effect */
+}
+
+#user-container h1 {
+    color: #2c3e50;
+    /* Dark gray text color */
+}
+
+#user-container h2 {
+    color: #34495e;
+    /* Dark blue-gray text color */
+    /* Adjust the margin-top as needed */
+}
+
+
+#Button-container {
+    /* align-items: center;
+    text-align: center; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #ecf0f1;
+    padding: 10px;
+    /* margin-top: 10px; */
+}
+
+#members,
+#addMembers,
+#leaveGroup {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#members:hover,
+#addMembers:hover{
+    background-color: #2980b9;
+}
+
+
+#leaveGroup,
+#deleteGroup {
+    background-color: #e74c3c;
+}
+#leaveGroup:hover ,
+#deleteGroup:hover {
+    background-color: #c0392b;
+}
+
+
+
+@media only screen and (max-width: 600px) {
+    ul.menu-bar {
+        position: static;
+        background-color: #34495e;
+        text-align: center;
+    }
+
+    ul.menu-bar li {
+        display: block;
+        width: 100%;
+        margin: 0;
+    }
+
+    ul.menu-bar li a {
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}  
+
+
+/* Add your preferred styling for the popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#details-container {  
+    /* display: flex; */
+    background-color: #859ebaa6; 
+    padding: 0.5rem;
+    align-self: center;
+    align-items: center;
+    text-align: center;
+    
+}
+#user, #name {
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin-right: 0%;
+    display: inline;
+    margin: 0; /* Remove default margin */
+}
+
+
+#deleteGroup {
+    margin-left: auto;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    width: 7.5rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+} 
