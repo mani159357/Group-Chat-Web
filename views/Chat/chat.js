@@ -117,15 +117,9 @@ function createGroup() {
 
 ////////// For displaying the Groups //////////
 async function toggleVisibility(e) {
-    console.log(e.target.value)
-    localStorage.setItem('g_id', e.target.value)
-    await loadGroupName();
-    setTimeout(read, 10)
-    //  read()
-}
-
-function loadGroupName() {
-    return new Promise((resolve, reject) => {
+    try {
+        console.log(e.target.textContent)
+        localStorage.setItem('g_id', e.target.value)
         var Myname = document.getElementById('user-container')
         Myname.style.display = "none"
         var listSection = document.getElementById('userListSection');
@@ -141,44 +135,30 @@ function loadGroupName() {
 
         document.getElementById('GMembers').style.display = "none"
         document.getElementById('newUsers').style.display = "none"
-        resolve(1)
-    })
-}
 
-
-async function read() {
-    try {
-        var currentURL = window.location.href;
-        // Extract the hash part
-        var hashPart = currentURL.split('#')[1];
-        // If there's a hash part, create a URLSearchParams object
-        if (hashPart) {
-            var hashParams = new URLSearchParams(hashPart);
-            // Get the value of the 'group' parameter
-            var groupValue = hashParams.get('group');
-            grp = groupValue
-            document.getElementById('name').innerHTML = `Group : ${groupValue}`
-            if (groupValue) {
-                g_name = `${groupValue}_msgs`
-            }
-            if (groupValue == 'common') {
-                document.getElementById('Button-container').style.display = 'none';
-                document.getElementById('deleteGroup').hidden = true
-            }
-            else {
-                document.getElementById('Button-container').style.display = 'block';
-
-                document.getElementById('deleteGroup').hidden = false
-            }
-            console.log("Group:", groupValue);
-            localStorage.setItem('g_name', groupValue)
-            await groupUsers();
-            await loadMsgs();
-        } else {
-            console.log("No hash parameters found.");
+        grp = e.target.textContent
+        grpId = e.target.value
+        document.getElementById('name').innerHTML = `Group : ${e.target.textContent}`
+        if (e.target.textContent) {
+            g_name = `${e.target.textContent}_msgs`
         }
+        if (e.target.textContent == 'common') {
+            document.getElementById('Button-container').style.display = 'none';
+            document.getElementById('deleteGroup').hidden = true
+        }
+        else {
+            document.getElementById('Button-container').style.display = 'block';
+
+            document.getElementById('deleteGroup').hidden = false
+        }
+        console.log("Group:", e.target.textContent);
+        localStorage.setItem('g_name', e.target.textContent)
+        await groupUsers(e.target.value);
+        loadMsgs(e.target.value);
+        console.log("mani")
+        console.log('hello')
     } catch {
-        console.log("error forund in executing read function")
+        console.log("error forund in executing  function")
     }
 
 }
@@ -312,7 +292,7 @@ function addNewMessage(msg) {
 }
 
 ////////// For storing and getting messages from the LocalStorage ////////// 
-function loadMsgs() {
+function loadMsgs(grpid) {
     return new Promise((resolve, reject) => {
         const messages = JSON.parse(localStorage.getItem(`${grp}_msgs`))
         console.log(messages)
@@ -330,7 +310,7 @@ function loadMsgs() {
             resolve(1)
         } else {
             const L_msgs = []
-            axios.get(`/chat/getMessages/${grp}`, {
+            axios.get(`/chat/getMessages/${grpid}`, {
                 headers: {
                     "Authorization": token
                 }
@@ -382,9 +362,9 @@ function getUsers() {
 }
 
 ////////// For Gettting Group Users From Backend //////////
-function groupUsers() {
+function groupUsers(grp) {
     return new Promise((resolve, reject) => {
-        axios.get(`/chat/getGroupUsers/${grp}`, {
+        axios.get(`/chat/getGroupUsers/${grpId}`, {
             headers: {
                 "Authorization": token
             }
@@ -544,7 +524,8 @@ function removeUser(e) {
         grp: group
     }, { headers: { 'Authorization': token } }).then((response) => {
         console.log(response.data)
-        alert(response.data.Removed + " is removed from group")
+        document.getElementById('GMembers').style.display = "none"
+        alert(response.data.message)
     }).catch(err => {
         document.getElementById('errorMessage').textContent = err.response.data.message
         showPopup()
@@ -555,7 +536,8 @@ function removeUser(e) {
 ////////// For adding User to a Group //////////
 function addMembers() {
     document.getElementById('GMembers').style.display = "none"
-    axios.get(`/chat/getGroupUsers/${grp}`, {
+    console.log(grp)
+    axios.get(`/chat/getGroupUsers/${grpId}`, {
         headers: {
             "Authorization": token
         }
@@ -778,5 +760,3 @@ function getMessages() {
             console.error('Error in getting messages:', error);
         });
 }
-
-

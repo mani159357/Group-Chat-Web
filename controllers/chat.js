@@ -12,7 +12,7 @@ const getMessages = async (req, res, next) => {
     const grp = req.params.grp
     console.log("grp is")
     console.log(grp)
-    const gId = await Group.findOne({ where: { groupName: grp } })
+    const gId = await Group.findOne({ where: { id: grp } })
     const grpId = gId ? gId.id : gId;
     console.log(grpId)
 
@@ -60,13 +60,14 @@ const getGroupUsers = async (req, res, next) => {
     const grp = req.params.grp;
     console.log("grp name is")
     console.log(grp)
+    console.log(typeof grp)
     try {
         let Cusers
-        if (grp === "common" || grp === null) {
+        if (grp == 'undefined') {
             Cusers = await User.findAll();
         }
         else {
-            const gId = await Group.findOne({ where: { groupName: grp } });
+            const gId = await Group.findOne({ where: { id: grp } });
 
             const ids = await UserGroup.findAll({ where: { groupId: gId.id } })
             console.log(ids)
