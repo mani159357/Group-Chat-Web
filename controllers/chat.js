@@ -318,17 +318,49 @@ const leaveGroup = async (req,res,next) => {
     const userId = req.query.userid;
     const gDetails = req.body.grp
     try {
-        const gData = await Group.findOne({ where: { id : gId } })
         const Details = await UserGroup.destroy({
             where: {
                 userId: userId,
-                groupId: gData.id
+                groupId: gId
             }
         })
         const GDetails = await Group.update({ members: gDetails.users }, { where: { id : gId } })
         return res.status(200).json({Removed: Details, gData: GDetails, message: "successfully removed the user from the group" })
     } catch {
         return res.status(403).json({ message: " Something went wrog while making admin" })
+    }
+}
+
+
+
+const deleteGroup = async (req,res,next) => {
+    console.log("This is mani ")
+    const gId = req.params.gId;
+    const userId = req.query.userid;
+    console.log("This is mani ")
+    try {
+        const GroupDetails = await UserGroup.findOne({
+            where: {
+                userId: userId,
+                groupId: gId
+            }
+        })
+        console.log("This is mani ")
+        console.log(GroupDetails.dataValues.admin)
+        if(GroupDetails.dataValues.admin){
+        const Details = await UserGroup.destroy({
+            where: {
+                groupId: gId
+            }
+        })
+        return res.status(200).json({Removed: Details, message: "successfully removed the user from the group" })
+        }
+        else{
+            return res.status(200).json({message: "Sorry, You are not Admin of the Group -_-"})
+        }
+        
+    } catch {
+        return res.status(403).json({ message: "Something went wrong while deleting the Group" })
     }
 }
 
@@ -346,5 +378,6 @@ module.exports = {
     updateGroup,
     showMembers,
     leaveGroup,
-    removeAdmin
+    removeAdmin,
+    deleteGroup
 }

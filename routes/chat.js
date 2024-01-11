@@ -21,5 +21,6 @@ router.patch('/removeAdminUser/:uId', authenticatemiddleware.authenticate , chat
 router.patch('/removeGroupUser/:uId', authenticatemiddleware.authenticate , chatController.removeUser)
 router.patch('/updateGroup', authenticatemiddleware.authenticate , chatController.updateGroup)
 router.patch('/leaveGroup/:gId',  authenticatemiddleware.authenticate , chatController.leaveGroup)
+router.delete('/deleteGroup/:gId',  authenticatemiddleware.authenticate , chatController.deleteGroup)
 
 module.exports = router;

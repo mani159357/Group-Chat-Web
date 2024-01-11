@@ -119,57 +119,68 @@ function createGroup() {
 async function toggleVisibility(e) {
     console.log(e.target.value)
     localStorage.setItem('g_id', e.target.value)
-    var Myname = document.getElementById('user-container')
-    Myname.style.display = "none"
-    var listSection = document.getElementById('userListSection');
-    var myDiv = document.getElementById("common-container");
-    listSection.style.display = 'none'
-
-    if (myDiv.style.display === 'none') {
-        myDiv.style.display = "none"
-        myDiv.style.display = "block"
-    } else {
-        myDiv.style.display = "block"
-    }
-
-    document.getElementById('GMembers').style.display = "none"
-    document.getElementById('newUsers').style.display = "none"
-    // 
+    await loadGroupName();
     setTimeout(read, 10)
-    // read()
+    //  read()
 }
 
-function read() {
-    var currentURL = window.location.href;
-    // Extract the hash part
-    var hashPart = currentURL.split('#')[1];
-    // If there's a hash part, create a URLSearchParams object
-    if (hashPart) {
-        var hashParams = new URLSearchParams(hashPart);
-        // Get the value of the 'group' parameter
-        var groupValue = hashParams.get('group');
-        grp = groupValue
-        document.getElementById('name').innerHTML = `Group : ${groupValue}`
-        if (groupValue) {
-            g_name = `${groupValue}_msgs`
-        }
-        if (groupValue == 'common') {
-            document.getElementById('Button-container').style.display = 'none';
-            document.getElementById('deleteGroup').hidden = true
-        }
-        else {
-            document.getElementById('Button-container').style.display = 'block';
+function loadGroupName() {
+    return new Promise((resolve, reject) => {
+        var Myname = document.getElementById('user-container')
+        Myname.style.display = "none"
+        var listSection = document.getElementById('userListSection');
+        var myDiv = document.getElementById("common-container");
+        listSection.style.display = 'none'
 
-            document.getElementById('deleteGroup').hidden = false
+        if (myDiv.style.display === 'none') {
+            myDiv.style.display = "none"
+            myDiv.style.display = "block"
+        } else {
+            myDiv.style.display = "block"
         }
-        // Log or use the group value
-        console.log("Group:", groupValue);
-        localStorage.setItem('g_name', groupValue)
-        groupUsers();
-        setTimeout(loadMsgs, 100);
-    } else {
-        console.log("No hash parameters found.");
+
+        document.getElementById('GMembers').style.display = "none"
+        document.getElementById('newUsers').style.display = "none"
+        resolve(1)
+    })
+}
+
+
+async function read() {
+    try {
+        var currentURL = window.location.href;
+        // Extract the hash part
+        var hashPart = currentURL.split('#')[1];
+        // If there's a hash part, create a URLSearchParams object
+        if (hashPart) {
+            var hashParams = new URLSearchParams(hashPart);
+            // Get the value of the 'group' parameter
+            var groupValue = hashParams.get('group');
+            grp = groupValue
+            document.getElementById('name').innerHTML = `Group : ${groupValue}`
+            if (groupValue) {
+                g_name = `${groupValue}_msgs`
+            }
+            if (groupValue == 'common') {
+                document.getElementById('Button-container').style.display = 'none';
+                document.getElementById('deleteGroup').hidden = true
+            }
+            else {
+                document.getElementById('Button-container').style.display = 'block';
+
+                document.getElementById('deleteGroup').hidden = false
+            }
+            console.log("Group:", groupValue);
+            localStorage.setItem('g_name', groupValue)
+            await groupUsers();
+            await loadMsgs();
+        } else {
+            console.log("No hash parameters found.");
+        }
+    } catch {
+        console.log("error forund in executing read function")
     }
+
 }
 
 
@@ -262,6 +273,7 @@ function sendMessage(e) {
             addNewMessage(response.data.messages)
             // setTimeout(scrollToBottom, 100);
             scrollToBottom()
+            updateChat();
         })
         .catch(error => {
             alert(error.response.status + ' error :' + error.response.data.message)
@@ -301,41 +313,47 @@ function addNewMessage(msg) {
 
 ////////// For storing and getting messages from the LocalStorage ////////// 
 function loadMsgs() {
-    const messages = JSON.parse(localStorage.getItem(`${grp}_msgs`))
-    console.log(messages)
-    if (messages) {
-        const len = messages.length
+    return new Promise((resolve, reject) => {
+        const messages = JSON.parse(localStorage.getItem(`${grp}_msgs`))
         console.log(messages)
-        if (messages.length >= 10) {
-            messages.splice(0, len - 10)
-        }
-        messages.forEach(element => {
-            if (!document.getElementById(`message-${element.id}`)) {
-                addNewMessage(element);
+        if (messages) {
+            const len = messages.length
+            console.log(messages)
+            if (messages.length >= 10) {
+                messages.splice(0, len - 10)
             }
-        })
-    } else {
-        const L_msgs = []
-        axios.get(`/chat/getMessages/${grp}`, {
-            headers: {
-                "Authorization": token
-            }
-        })
-            .then(response => {
-                const oldmsgs = response.data.messages;
-                console.log(oldmsgs)
-                L_msgs.push(...oldmsgs);
-                if (L_msgs.length >= 10) {
-                    L_msgs.splice(0, L_msgs.length - 10)
-                }
-                localStorage.setItem(`${grp}_msgs`, JSON.stringify(L_msgs));
-                L_msgs.forEach(element => {
+            messages.forEach(element => {
+                if (!document.getElementById(`message-${element.id}`)) {
                     addNewMessage(element);
-                })
-            }).catch(err => {
-                console.log(err.response);
+                }
             })
-    }
+            resolve(1)
+        } else {
+            const L_msgs = []
+            axios.get(`/chat/getMessages/${grp}`, {
+                headers: {
+                    "Authorization": token
+                }
+            })
+                .then(response => {
+                    const oldmsgs = response.data.messages;
+                    console.log(oldmsgs)
+                    L_msgs.push(...oldmsgs);
+                    if (L_msgs.length >= 10) {
+                        L_msgs.splice(0, L_msgs.length - 10)
+                    }
+                    localStorage.setItem(`${grp}_msgs`, JSON.stringify(L_msgs));
+                    L_msgs.forEach(element => {
+                        addNewMessage(element);
+                    })
+                    resolve(1)
+                }).catch(err => {
+                    console.log(err.response);
+                    reject(0)
+                })
+        }
+    })
+
 }
 
 ////////// For Gettting All Users From Backend //////////
@@ -365,32 +383,37 @@ function getUsers() {
 
 ////////// For Gettting Group Users From Backend //////////
 function groupUsers() {
-    axios.get(`/chat/getGroupUsers/${grp}`, {
-        headers: {
-            "Authorization": token
-        }
-    })
-        .then(response => {
-            console.log(response)
-            const parentElement = document.getElementById('messages');
-            parentElement.innerHTML = ''
-            response.data.users.forEach(ele => {
+    return new Promise((resolve, reject) => {
+        axios.get(`/chat/getGroupUsers/${grp}`, {
+            headers: {
+                "Authorization": token
+            }
+        })
+            .then(response => {
+                console.log(response)
                 const parentElement = document.getElementById('messages');
-                const newRow = document.createElement('tr');
-                newRow.setAttribute('id', `user-${ele.id}`)
-                newRow.setAttribute('class', 'usersjoined')
-                if (response.data.you == ele.name) {
-                    newRow.innerHTML = `<td>You joined</td>`;
-                } else {
-                    newRow.innerHTML = `<td> ${ele.name} joined</td>`;
-                }
-                parentElement.appendChild(newRow);
+                parentElement.innerHTML = ''
+                response.data.users.forEach(ele => {
+                    const parentElement = document.getElementById('messages');
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('id', `user-${ele.id}`)
+                    newRow.setAttribute('class', 'usersjoined')
+                    if (response.data.you == ele.name) {
+                        newRow.innerHTML = `<td>You joined</td>`;
+                    } else {
+                        newRow.innerHTML = `<td> ${ele.name} joined</td>`;
+                    }
+                    parentElement.appendChild(newRow);
+                })
+                resolve(1)
             })
-        })
-        .catch(err => {
-            alert(err.response.status + ' error :' + err.response.data.message)
-            document.body.innerHTML += `<div style="color:red;">${err} <div>`;
-        })
+            .catch(err => {
+                alert(err.response.status + ' error :' + err.response.data.message)
+                document.body.innerHTML += `<div style="color:red;">${err} <div>`;
+                reject(0)
+            })
+    })
+
 }
 
 //////////For Displaying The Users present in Group //////////
@@ -663,6 +686,8 @@ function leaveGroup() {
             "Authorization": token
         }
     }).then((response) => {
+        document.getElementById('errorMessage').textContent = response.data.message
+        showPopup()
         console.log(response.data)
         location.reload();
     }).catch(err => {
@@ -687,6 +712,7 @@ function deleteGroup() {
         document.getElementById('errorMessage').textContent = response.data.message
         showPopup()
         console.log(response.data.message)
+        location.reload();
     }).catch(err => {
         console.log(err.response)
         document.getElementById('errorMessage').textContent = err.response.data.message
@@ -700,7 +726,7 @@ function updateChat() {
     // Call the getMessages function periodically
     setInterval(() => {
         updatemsgs();
-    }, 3000);
+    }, 1000);
 }
 
 ////////// Loading the page //////////
@@ -712,7 +738,6 @@ window.onload = async () => {
     try {
         getGroups()
         await getUsers();
-        updateChat();
 
     } catch {
         throw new Error("something went wrong while loading the page")
