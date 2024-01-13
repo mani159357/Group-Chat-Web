@@ -1,12 +1,45 @@
+
+
 const token = localStorage.getItem('token');
 const u_name = localStorage.getItem('username')
 const username = u_name.replace(/"/g, '');
 const userid = localStorage.getItem('userid')
+
+// import {io} from "socket.io-client"
+
 let g_msgs;
 let grp = 'common';
 var users = [];
 var groups = [];
 var uniqueUsers
+
+// const socket = io('http://localhost:3000')
+
+// socket.on('receive-message', (message) => {
+//     // Handle received messages in real-time
+//     addNewMessage(message);
+//     scrollToBottom();
+// });
+
+// const socket = io('http://localhost:3000')
+// socket.on('connect',() =>{
+//     displayMessage("your connection is made")
+//     socket.emit('custom-event', 10, 'Hi', {a:'a'})
+//     socket.emit('send-message',message="hi", room)
+    
+// })
+
+// socket.on('receive-message',message => {
+//     displayMessage(message)
+// })
+
+// socket.emit('join-room',  room, message=> {
+//     displayMessage(message)
+// })
+
+// function displayMessage(message){
+//     alert(message);
+// }
 
 
 ////////// For Displaying Groups creating page //////////
@@ -259,6 +292,9 @@ function sendMessage(e) {
             alert(error.response.status + ' error :' + error.response.data.message)
             console.error('Error in sending message:', error);
         });
+
+        // socket.emit('send-message', { grp, newmessage });
+        // e.target.reset();
 }
 
 ////////// For Scrolling to the bottom automatically //////////
@@ -717,13 +753,16 @@ window.onload = async () => {
         `<strong>Hi, ${username}</strong>.<br> Welcome To Group Chat`
     document.getElementById('user').innerHTML =
         `<strong>Hi, ${username}</strong>`
-    try {
-        getGroups()
+   try {
+        getGroups();
         await getUsers();
-
     } catch {
         throw new Error("something went wrong while loading the page")
     }
+    // Join the common room
+    // socket.emit('join-room', 'common', (response) => {
+    //     console.log(response);
+    // });
 
 }
 
@@ -759,4 +798,7 @@ function getMessages() {
             alert(error.response.status + ' error :' + error.response.data.message)
             console.error('Error in getting messages:', error);
         });
+        // socket.emit('join-room', grp, (response) => {
+        //     console.log(response);
+        // });
 }

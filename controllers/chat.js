@@ -5,6 +5,43 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users')
 const sequelize = require('../utils/database');
 const { Op } = require('sequelize');
+// const http = require('http');
+// const express = require('express');
+
+// const io = require('socket.io')
+// (3000, {
+//     cors: {
+//         origin: ['http://localhost:3000'],
+//     },
+// })
+
+// const socketIo = require('socket.io');
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = socketIo(server);
+
+// io.on('connetcion', (socket) => {
+//     console.log(socket.id + "connection is made")
+//     socket.on('custom-event',(number,string,obj) => {
+//         console.log(number,string,obj)
+//     })
+//     socket.on('send-message',(message,room) => {
+//         if(room === ''){
+//             // io.emit('receive-message',message)
+//             socket.broadcast.emit("receive-message", message)
+//             console.log(message)
+//         } else {
+//             socket.to(room).emit("receive-message", message)
+//         }
+        
+//     })
+//     socket.on('join-room', (room,cb) => {
+//         cb(`${room}`+"called")
+//         socket.join(room)
+//     })
+    
+// })
 
 
 
@@ -19,10 +56,12 @@ const getMessages = async (req, res, next) => {
     try {
         const messages = await Message.findAll({ where: { groupId: grpId } })
         console.log(messages)
+        // io.emit('message', { group: grpId, messages });
         return res.status(200).json({ messages: messages })
     } catch {
         return res.status(403).json({ message: "something went wrong while fetching the messages" })
     }
+    
 
 }
 
@@ -48,11 +87,13 @@ const sendMessage = async (req, res, next) => {
             userId: req.user.dataValues.id,
             groupId: grpId
         });
+        // io.emit('newMessage', { group: grpId, message: msg });
 
         return res.status(200).json({ messages: msg, message: "message sent Successfully" })
     } catch {
         return res.status(403).json({ message: "something went wrong while sending the message" })
     }
+    
 }
 
 
@@ -364,6 +405,8 @@ const deleteGroup = async (req,res,next) => {
         return res.status(403).json({ message: "Something went wrong while deleting the Group" })
     }
 }
+
+
 
 module.exports = {
     getMessages,
