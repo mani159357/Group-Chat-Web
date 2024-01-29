@@ -310,3 +310,34 @@ form {
     border-radius: 5px;
     transition: background-color 0.3s;
 }
+
+
+/* Style for file input */
+#fileInput {
+    display: none; /* Hides the file input */
+  }
+  
+  /* Style for the file input label */
+  .file-input-label {
+    background-color: #007bff; /* Blue color for the label background */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding around the text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+  }
+  
+  .file-input-label:hover {
+    background-color: #0056b3; /* Darker blue color on hover */
+  }
+  
+img {
+    width: 15rem; /* Set the width */
+    height: auto; /* Set the height */
+    object-fit: cover;
+}
+
+video {
+    width: 15rem; /* Set width to fill its container */
+    height: auto; /* Maintain aspect ratio */
+}

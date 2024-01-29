@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const chatController = require('../controllers/chat');
+const imageController = require('../controllers/image')
 const authenticatemiddleware = require('../middleware/auth');
 
 router.post('/sendMessage', authenticatemiddleware.authenticate , chatController.sendMessage)
@@ -22,5 +23,7 @@ router.patch('/removeGroupUser/:uId', authenticatemiddleware.authenticate , chat
 router.patch('/updateGroup', authenticatemiddleware.authenticate , chatController.updateGroup)
 router.patch('/leaveGroup/:gId',  authenticatemiddleware.authenticate , chatController.leaveGroup)
 router.delete('/deleteGroup/:gId',  authenticatemiddleware.authenticate , chatController.deleteGroup)
+
+router.post('/sendImage',authenticatemiddleware.authenticate, imageController.sendImage)
 
 module.exports = router;

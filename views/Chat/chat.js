@@ -1,5 +1,4 @@
 
-
 const token = localStorage.getItem('token');
 const u_name = localStorage.getItem('username')
 const username = u_name.replace(/"/g, '');
@@ -26,7 +25,7 @@ var uniqueUsers
 //     displayMessage("your connection is made")
 //     socket.emit('custom-event', 10, 'Hi', {a:'a'})
 //     socket.emit('send-message',message="hi", room)
-    
+
 // })
 
 // socket.on('receive-message',message => {
@@ -266,7 +265,7 @@ function updatemsgs() {
 }
 
 ////////// For sending Messages //////////
-function sendMessage(e) {
+function sendImage(e) {
     console.log(token)
     e.preventDefault();
     const form = new FormData(e.target);
@@ -293,9 +292,53 @@ function sendMessage(e) {
             console.error('Error in sending message:', error);
         });
 
-        // socket.emit('send-message', { grp, newmessage });
-        // e.target.reset();
+    // socket.emit('send-message', { grp, newmessage });
+    // e.target.reset();
 }
+
+
+function sendMessage(e) {
+    console.log(token)
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const newmessage = form.get("message"); // Fix typo here
+
+    var fileInput = document.getElementById('fileInput');
+    var file = fileInput.files[0];
+    console.log(file)
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('message', newmessage)
+    formData.append('grp', grp)
+
+    // const file = form.get("file");
+    console.log(newmessage);
+    console.log(formData.get('file'))
+
+    axios.post('/upload/file',
+        formData, {
+        headers: {
+            "Authorization": token
+        }
+    })
+        .then(response => {
+            console.log(response.data.messages)
+            e.target.reset()
+            addNewMessage(response.data.messages)
+            // setTimeout(scrollToBottom, 100);
+            scrollToBottom()
+            updateChat();
+        })
+        .catch(error => {
+            alert(error.response.status + ' error :' + error.response.data.message)
+            console.error('Error in sending message:', error);
+        });
+
+    // socket.emit('send-message', { grp, newmessage });
+    // e.target.reset();
+}
+
+
 
 ////////// For Scrolling to the bottom automatically //////////
 function scrollToBottom() {
@@ -315,13 +358,58 @@ function addNewMessage(msg) {
     const parentElement = document.getElementById('messages');
     const newRow = document.createElement('tr');
 
-    if (msg.name == username) {
-        newRow.setAttribute('id', `message-${msg.id}`)
-        newRow.setAttribute('class', `yourmsg`)
-        newRow.innerHTML = `<td>You : ${msg.message}</td>`;
+    if (msg.type == "msg") {
+
+        if (msg.name == username) {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.setAttribute('class', `yourmsg`)
+            newRow.innerHTML = `<td>You : ${msg.message}</td>`;
+        } else {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.innerHTML = `<td>${msg.name} : ${msg.message}</td>`;
+        }
+    } else if (msg.type == "image/jpeg") {
+        if (msg.name == username) {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.setAttribute('class', `yourmsg`)
+            newRow.innerHTML = `<td>You :   <img src="${msg.message}" alt=""> </td>`;
+        } else {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.innerHTML = `<td>${msg.name} : <img src="${msg.message}"  alt=""></td>`;
+        }
+    } else if (msg.type == "video/mp4") {
+        if (msg.name == username) {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.setAttribute('class', `yourmsg`)
+            newRow.innerHTML = `<td>You :   <video controls>
+            <source src="${msg.message}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video> </td>`;
+        } else {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.innerHTML = `<td>${msg.name} : <video controls>
+            <source src="${msg.message}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video></td>`;
+        }
+    } else if (msg.type == "application/pdf"){
+        if (msg.name == username) {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.setAttribute('class', `yourmsg`)
+            newRow.innerHTML = `<td>You:  <iframe src="${msg.message}" width="600" height="400"></iframe> </td>`;
+        } else {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.innerHTML = `<td>${msg.name} : <iframe src="${msg.message}" width="600" height="400"></iframe></td>`;
+        }
     } else {
-        newRow.setAttribute('id', `message-${msg.id}`)
-        newRow.innerHTML = `<td>${msg.name} : ${msg.message}</td>`;
+        if (msg.name == username) {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.setAttribute('class', `yourmsg`)
+            newRow.innerHTML = `<td>You:  <a href="${msg.message}" download>Download Document</a> </td>`;
+        } else {
+            newRow.setAttribute('id', `message-${msg.id}`)
+            newRow.innerHTML = `<td>${msg.name} : <a href="${msg.message}" download>Download Document</a></td>`;
+        }
     }
 
     parentElement.appendChild(newRow);
@@ -753,7 +841,7 @@ window.onload = async () => {
         `<strong>Hi, ${username}</strong>.<br> Welcome To Group Chat`
     document.getElementById('user').innerHTML =
         `<strong>Hi, ${username}</strong>`
-   try {
+    try {
         getGroups();
         await getUsers();
     } catch {
@@ -798,7 +886,13 @@ function getMessages() {
             alert(error.response.status + ' error :' + error.response.data.message)
             console.error('Error in getting messages:', error);
         });
-        // socket.emit('join-room', grp, (response) => {
-        //     console.log(response);
-        // });
+    // socket.emit('join-room', grp, (response) => {
+    //     console.log(response);
+    // });
 }
+
+
+// import {io} from "socket.io-client"
+// const socket = io('http://localhost:3000');
+
+// socket.on('sendnMessage', updatemsgs());

@@ -97,7 +97,9 @@
             <div class="form-container">
                 <form onsubmit="sendMessage(event)" id="myform">
                     <label for="message">Message :</label>
-                    <input type="text" name="message" id="message" required>
+                    <input type="text" name="message" id="message">
+                    <label for="fileInput" class="file-input-label">📁</label>
+                    <input type="file" name="file" id="fileInput" >
                     <button id="emojiPickerButton" type="button" onclick="toggleEmojiPicker()">🙂</button>
                     <button id="send"> Send Message</button>
                 </form>
@@ -105,6 +107,7 @@
         </div>
     </div>
 
+    <!-- accept="image/*,video/*" -->
 
     <div class="popup" id="popup">
         <div class="popup-content">
