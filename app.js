@@ -55,6 +55,7 @@ const Message = require('./models/messages')
 const Group = require('./models/groups')
 const UserGroup = require('./models/userGroup');
 const Forgotpassword = require('./models/forgotpassword')
+const Archive = require('./models/archive')
 
 User.hasMany(Message)
 Message.belongsTo(User)
@@ -67,6 +68,12 @@ Group.belongsToMany(User, { through: UserGroup });
 
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
+
+User.hasMany(Message)
+Archive.belongsTo(User)
+
+Archive.belongsTo(Group)
+Group.hasMany(Message);
 
 sequelize.sync({force: false})
     .then(() => {

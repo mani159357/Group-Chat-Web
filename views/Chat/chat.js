@@ -392,7 +392,7 @@ function addNewMessage(msg) {
             Your browser does not support the video tag.
         </video></td>`;
         }
-    } else if (msg.type == "application/pdf"){
+    } else if (msg.type == "application/pdf") {
         if (msg.name == username) {
             newRow.setAttribute('id', `message-${msg.id}`)
             newRow.setAttribute('class', `yourmsg`)
@@ -405,10 +405,10 @@ function addNewMessage(msg) {
         if (msg.name == username) {
             newRow.setAttribute('id', `message-${msg.id}`)
             newRow.setAttribute('class', `yourmsg`)
-            newRow.innerHTML = `<td>You:  <a href="${msg.message}" download>Download Document</a> </td>`;
+            newRow.innerHTML = `<td>You:  <a href="${msg.message}" download>Download</a> </td>`;
         } else {
             newRow.setAttribute('id', `message-${msg.id}`)
-            newRow.innerHTML = `<td>${msg.name} : <a href="${msg.message}" download>Download Document</a></td>`;
+            newRow.innerHTML = `<td>${msg.name} : <a href="${msg.message}" download>Download</a></td>`;
         }
     }
 

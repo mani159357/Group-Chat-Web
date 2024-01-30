@@ -5,6 +5,60 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users')
 const sequelize = require('../utils/database');
 const { Op } = require('sequelize');
+const Messages = require('../models/messages');
+const Archive = require('../models/archive')
+
+process.env.TZ = 'Asia/Kolkata';
+
+////////// Cron job //////////
+const cron = require('node-cron');
+// Schedule a task to run every minute
+cron.schedule('0 0 * * *', () => {
+    console.log('Running a task every minute');
+    const istDate = new Date();
+    const oneDayAgo = new Date(istDate.getTime() + (5.5 * 60 * 60 * 1000));
+    console.log(istDate)
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    console.log(oneDayAgo)
+
+    Messages.findAll({
+        where: {
+          createdAt: {
+            // [Op.between]: [oneDayAgo, new Date()] // Find rows created between one day ago and now
+            [Op.lt]: oneDayAgo // Find rows created before one day ago
+          }
+        }
+      })
+      .then(async messages => {
+        console.log("heheheheheheheheh")
+        console.log(messages); // Messages created before one day ago
+
+        for (const message of messages) {
+            console.log(message.updatedAt)
+            await Archive.create({
+              name: message.name,
+              message: message.message,
+              type: message.type,
+              userId: message.userId,
+              groupId: message.groupId,
+              createdAt: message.createdAt,
+              updatedAt: message.updatedAt
+            });
+      
+            // Delete the message from the original table
+            await message.destroy();
+          }
+
+      })
+      .catch(error => {
+        console.error('Error retrieving messages:', error);
+      });
+},
+null, // onComplete
+true, // start
+'Asia/Kolkata');
+
+
 // const http = require('http');
 // const express = require('express');
 
@@ -407,6 +461,27 @@ const deleteGroup = async (req,res,next) => {
 }
 
 
+const archive = (req,res,next) => {
+    const oneDayAgo = new Date();
+    // oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
+    Messages.findAll({
+        where: {
+          createdAt: {
+            // [Op.between]: [oneDayAgo, new Date()] // Find rows created between one day ago and now
+            [Op.lt]: oneDayAgo // Find rows created before one day ago
+          }
+        }
+      })
+      .then(messages => {
+        console.log("heheheheheheheheh")
+        console.log(messages); // Messages created before one day ago
+      })
+      .catch(error => {
+        console.error('Error retrieving messages:', error);
+      });
+}
+
 
 module.exports = {
     getMessages,
@@ -423,5 +498,6 @@ module.exports = {
     showMembers,
     leaveGroup,
     removeAdmin,
-    deleteGroup
+    deleteGroup,
+    archive
 }

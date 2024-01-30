@@ -25,5 +25,6 @@ router.patch('/leaveGroup/:gId',  authenticatemiddleware.authenticate , chatCont
 router.delete('/deleteGroup/:gId',  authenticatemiddleware.authenticate , chatController.deleteGroup)
 
 router.post('/sendImage',authenticatemiddleware.authenticate, imageController.sendImage)
+router.post('/archive', authenticatemiddleware.authenticate, chatController.archive)
 
 module.exports = router;

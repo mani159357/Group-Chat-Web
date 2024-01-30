@@ -1,3 +1,5 @@
+
+console.log("its working")
 import {io} from "socket.io-client"
 
 const socket = io('http://localhost:3000')
@@ -29,3 +31,5 @@ socket.emit('join-room',  room, message=> {
 function displayMessage(message){
     alert(message);
 }
+
+
