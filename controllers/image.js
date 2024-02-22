@@ -1,15 +1,6 @@
 const Message = require('../models/messages');
 const Group = require('../models/groups')
 const s3Services = require('../services/s3Services')
-// const router = express.Router();
-
-// const upload = multer({ dest: 'uploads/' });
-
-// router.post('/file', upload.single('file'), function (req, res) {
-//     console.log("hello")
-//     console.log(req.file)
-
-// })
 
 const send = async (req, res) => {
     console.log("hello")
@@ -54,7 +45,7 @@ const send = async (req, res) => {
             console.log("Got file")
             const userId = req.user.id;
             console.log(userId)
-            const filename = `chatImage${userId}/${new Date()}.jpg`;
+            const filename = `chatFile${userId}/${new Date()}`;
             console.log(filename)
             fileURL = await s3Services.uploadToS3(file, filename);
             console.log(fileURL)
@@ -72,8 +63,6 @@ const send = async (req, res) => {
     } catch {
         return res.status(403).json({ message: "something went wrong" })
     }
-
-
 
 }
 

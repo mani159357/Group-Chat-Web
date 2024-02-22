@@ -13,7 +13,7 @@ function login(e) {
             localStorage.setItem('username', response.data.userDetails[0].name)
             localStorage.setItem('userid', response.data.userDetails[0].id)
             alert("Logged in successfully")
-            window.location.href = "../Chat/chat.html" // change the page on successful login
+            window.location.href = "../Chat/index.html" // change the page on successful login
             // window.location.href = "../new.html" 
         } else {
             throw new Error('Failed to login')

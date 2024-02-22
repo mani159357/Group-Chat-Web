@@ -12,7 +12,7 @@ process.env.TZ = 'Asia/Kolkata';
 
 ////////// Cron job //////////
 const cron = require('node-cron');
-// Schedule a task to run every minute
+// Schedule a task to run everyday
 cron.schedule('0 0 * * *', () => {
     console.log('Running a task every minute');
     const istDate = new Date();

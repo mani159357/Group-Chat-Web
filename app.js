@@ -28,22 +28,13 @@ const sendImage = require('./controllers/image')
 const authenticatemiddleware = require('./middleware/auth');
 
 const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' });
-const storage = multer.memoryStorage(); // Store files in memory as buffers
+const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
 app.use('/user',userRoutes)
 app.use('/chat',chatRoutes)
 app.use('/password',password)
 app.post('/upload/file', authenticatemiddleware.authenticate, upload.single('file'), sendImage.send)
-
-// const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' });
-// app.post('/upload/file', upload.single('file'), function (req, res) {
-//     console.log("hello")
-//     console.log(req.file)
-
-// })
 
 app.use((req,res,next) => {
     res.sendFile(path.join(__dirname,`views/${req.url}`))
@@ -79,24 +70,6 @@ sequelize.sync({force: false})
     .then(() => {
         console.log("server running on port  3000")
         app.listen(process.env.PORT || 3000);
-
-        io.on('connetcion', (socket) => {
-            console.log(socket.id + "connection is made")
-            socket.on('custom-event',(number,string,obj) => {
-                console.log(number,string,obj)
-            })
-            socket.on('send-message',(message,room) => {
-                if(room === ''){
-                    // io.emit('receive-message',message)
-                    socket.broadcast.emit("receive-message", message)
-                    console.log(message)
-                } else {
-                    socket.to(room).emit("receive-message", message)
-                }
-                
-            })
-        })
-
     })
     .catch(err => {
         console.log(err);

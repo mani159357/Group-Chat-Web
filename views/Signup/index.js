@@ -16,7 +16,7 @@ function signup(e) {
         if(response.status === 201){
             console.log(response.data.message)
             alert('Signup Successful')
-            window.location.href = "../Login/login.html" // change the page on successful login
+            window.location.href = "../Login/index.html" // change the page on successful login
         } 
         else {
             throw new Error("error in user creation")

@@ -63,7 +63,6 @@ const forgotpassword = async (req, res) => {
     } catch (err) {
         return res.status(403).json({ message: err, success: false });
     }
-
 }
 
 function generateResetToken(id) {
@@ -149,6 +148,8 @@ const resetpassword = (req, res) => {
                             newpassword: password
                         }).then((response) => {
                             console.log(response)
+                            window.location.href = "../../Login/login.html"
+
                         }).catch((err) => console.log(err.response.data.message))
                     }
                 </script>
